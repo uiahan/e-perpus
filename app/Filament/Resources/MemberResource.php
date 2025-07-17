@@ -17,7 +17,11 @@ class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    public static function getNavigationGroup(): ?String {
+        return 'Menu Kelola';
+    }
 
     public static function form(Form $form): Form
     {

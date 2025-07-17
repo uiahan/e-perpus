@@ -17,7 +17,11 @@ class BookResource extends Resource
 {
     protected static ?string $model = Book::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
+
+    public static function getNavigationGroup(): ?String {
+        return 'Menu Kelola';
+    }
 
     public static function form(Form $form): Form
     {

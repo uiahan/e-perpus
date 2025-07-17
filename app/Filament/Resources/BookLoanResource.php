@@ -17,7 +17,11 @@ class BookLoanResource extends Resource
 {
     protected static ?string $model = BookLoan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-arrow-down';
+
+    public static function getNavigationGroup(): ?String {
+        return 'Menu Peminjaman';
+    }
 
     public static function form(Form $form): Form
     {
