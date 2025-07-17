@@ -47,20 +47,19 @@ class BookResource extends Resource
                 ->maxSize(5120)
                 ->imageEditor()
                 ->previewable()
-                ->nullable(),
-                Textarea::make('description')->nullable(),
-                TextInput::make('title')->required(),
+                ->nullable()->label('Cover'),
+                Textarea::make('description')->nullable()->label('Deskripsi'),
+                TextInput::make('title')->required()->label('Judul'),
                 Select::make('categories')
                     ->multiple()
                     ->relationship('categories', 'category_name')
                     ->searchable()
                     ->preload()
-                    ->required(),
-                TextInput::make('author')->required(),
-                TextInput::make('publisher')->required(),
-                TextInput::make('year')->numeric()->required(),
-                TextInput::make('isbn')->nullable()->unique(ignoreRecord: true),
-                TextInput::make('stock')->numeric()->minValue(0)->required(),
+                    ->required()->label('Kategori'),
+                TextInput::make('author')->required()->label('Pengarang'),
+                TextInput::make('publisher')->required()->label('Penerbit'),
+                TextInput::make('year')->numeric()->required()->label('Tahun'),
+                TextInput::make('code')->nullable()->unique(ignoreRecord: true)->label('Kode'),
             ]);
     }
 
@@ -70,11 +69,13 @@ class BookResource extends Resource
             ->columns([
                 ImageColumn::make('cover')
                     ->label('Cover')
-                    ->disk('public'),
-                TextColumn::make('title')->searchable(),
-                TextColumn::make('author'),
+                    ->disk('public')
+                    ->width(60)
+                    ->height(60),
+                TextColumn::make('title')->searchable()->label('Judul'),
+                TextColumn::make('author')->label('Pengarang'),
                 TextColumn::make('categories.category_name')
-                    ->label('Categories')
+                    ->label('Kategori')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'Novel' => 'primary',
@@ -82,7 +83,7 @@ class BookResource extends Resource
                         'Sejarah' => 'danger',
                         default => 'gray',
                     }),
-                TextColumn::make('stock'),
+                TextColumn::make('year')->label('Tahun'),
             ])
             ->filters([
                 //

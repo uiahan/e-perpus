@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('loan_num')->unique();
             $table->foreignUuid('member_id')->constrained()->cascadeOnDelete();
             $table->date('due_date');
+            $table->date('loan_date');
             $table->enum('status', ['Dalam Masa Pinjaman', 'Sudah Dikembalikan', 'Melebihi Tenggat Waktu'])->default('Dalam Masa Pinjaman'); 
             $table->timestamps();
         });

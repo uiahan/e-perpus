@@ -78,23 +78,20 @@ class BookLoanResource extends Resource
                     ->required()
                     ->label('Nomor Peminjaman'),
                 DatePicker::make('due_date')->required()->label('Tenggat Waktu'),
-                TextInput::make('penalty')->numeric()->nullable(),
-                DatePicker::make('return_date')->nullable(),
                 Select::make('status')
                     ->options([
-                        'dipinjam' => 'Dipinjam',
-                        'dikembalikan' => 'Dikembalikan',
-                        'telat' => 'Terlambat',
-                        'hilang' => 'Hilang',
+                        'Dalam Masa Pinjaman' => 'Dalam Masa Pinjaman',
+                        'Sudah Dikembalikan' => 'Sudah Dikembalikan',
+                        'Melebihi Tenggat Waktu' => 'Melebihi Tenggat Waktu',
                     ])
-                    ->default('dipinjam'),
+                    ->default('Dalam Masa Pinjaman'),
                 Select::make('member_id')
                     ->relationship('member', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Select::make('book_ids')
-                    ->label('Books')
+                    ->label('Buku')
                     ->multiple()
                     ->relationship('books', 'title')
                     ->searchable()
@@ -125,11 +122,13 @@ class BookLoanResource extends Resource
 
                         return $books;
                     }),
+                TextColumn::make('due_date')
+                    ->label('Tenggat Waktu')
+                    ->date('d M Y'),
                 TextColumn::make('status')->badge()->color(fn($state) => match ($state) {
-                    'dipinjam' => 'warning',
-                    'dikembalikan' => 'success',
-                    'telat' => 'danger',
-                    'hilang' => 'gray',
+                    'Dalam Masa Pinjaman' => 'warning',
+                    'Sudah Dikembalikan' => 'success',
+                    'Melebihi Tenggat Waktu' => 'danger',
                 }),
             ])
             ->filters([

@@ -37,12 +37,12 @@ class MemberResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('email')->required()->email()->unique(User::class, 'email'),
-                TextInput::make('phone')->numeric()->required(),
-                DatePicker::make('birth_date')->required(),
-                TextInput::make('profession')->required(),
-                Textarea::make('address')->required(),
+                TextInput::make('name')->required()->label('Nama Lengkap'),
+                TextInput::make('phone')->numeric()->required()->label('Nomor Telepon'),
+                TextInput::make('email')->required()->email()->unique(User::class, 'email')->label('Email'),
+                DatePicker::make('birth_date')->required()->label('Tanggal Lahir'),
+                TextInput::make('profession')->required()->label('Profesi'),
+                Textarea::make('address')->required()->label('Alamat'),
             ]);
     }
 
@@ -50,10 +50,10 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('phone'),
-                TextColumn::make('profession'),
-                TextColumn::make('user.email')->label('User'),
+                TextColumn::make('name')->searchable()->label('Nama Lengkap'),
+                TextColumn::make('phone')->label('Nomor Telepon'),
+                TextColumn::make('profession')->label('Profesi'),
+                TextColumn::make('user.email')->label('User')->label('email'),
             ])
             ->filters([
                 //

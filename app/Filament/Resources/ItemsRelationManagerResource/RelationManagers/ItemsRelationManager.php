@@ -25,28 +25,50 @@ class ItemsRelationManager extends RelationManager
                 Select::make('book_id')
                     ->relationship('book', 'title')
                     ->disabledOn('edit')
-                    ->required(),
-                DatePicker::make('return_date')->label('Return Date')->nullable(),
-                TextInput::make('penalty')->numeric()->nullable(),
+                    ->required()
+                    ->label('Buku'),
+                DatePicker::make('return_date')
+                    ->nullable()
+                    ->label('Tanggal Dikembalikan'),
+                TextInput::make('penalty')
+                    ->label('Denda')
+                    ->numeric()
+                    ->prefix('Rp ')
+                    ->nullable()
+                    ->helperText('Otomatis diisi berdasarkan status, tapi bisa diubah'),
                 Select::make('status')
+                    ->label('Status')
                     ->options([
-                        'dipinjam' => 'Dipinjam',
-                        'dikembalikan' => 'Dikembalikan',
-                        'telat' => 'Terlambat',
-                        'hilang' => 'Hilang',
+                        'dipinjam' => 'dipinjam',
+                        'dikembalikan' => 'dikembalikan',
+                        'telat' => 'telat',
+                        'hilang' => 'hilang',
                     ])
-                    ->required(),
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state === 'telat') {
+                            $set('penalty', 20000);
+                        } elseif ($state === 'hilang') {
+                            $set('penalty', 100000);
+                        } else {
+                            $set('penalty', null);
+                        }
+                    }),
             ]);
     }
+
 
     public function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                TextColumn::make('book.title')->label('Book'),
+                TextColumn::make('book.title')->label('Book')->label('Buku'),
                 TextColumn::make('status')->badge(),
-                TextColumn::make('return_date')->label('Returned At'),
-                TextColumn::make('penalty')->label('Penalty'),
+                TextColumn::make('return_date')->label('Returned At')->label('Tanggal Dikembalikan'),
+                TextColumn::make('penalty')
+                    ->label('Denda')
+                    ->formatStateUsing(fn($state) => $state ? 'Rp ' . number_format($state, 0, ',', '.') : '-'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),

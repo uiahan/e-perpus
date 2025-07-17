@@ -45,8 +45,8 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
+                TextInput::make('name')->required()->label('Nama'),
+                TextInput::make('email')->email()->required()->unique(ignoreRecord: true)->label('Email'),
                 Select::make('role')
                     ->options([
                         'superadmin' => 'Superadmin',
@@ -61,7 +61,7 @@ class UserResource extends Resource
                         return filled($state) ? Hash::make($state) : null;
                     })
                     ->required(fn($context) => $context === 'create')
-                    ->label('New Password')
+                    ->label('Password Baru')
                     ->placeholder(fn($context) => $context === 'edit' ? 'Kosongkan jika tidak ingin mengubah password' : null)
                     ->dehydrated(fn($state) => filled($state)),
             ]);
@@ -71,10 +71,10 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('email'),
-                TextColumn::make('role')->badge(),
-                TextColumn::make('created_at')->dateTime(),
+                TextColumn::make('name')->searchable()->label('Nama Lengkap'),
+                TextColumn::make('email')->label('Email'),
+                TextColumn::make('role')->badge()->label('Role'),
+                TextColumn::make('created_at')->dateTime()->label('Bergabung Pada'),
             ])
             ->filters([
                 //

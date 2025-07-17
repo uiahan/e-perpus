@@ -34,8 +34,8 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('category_name')->required(),
-                Textarea::make('description'),
+                TextInput::make('category_name')->required()->label('Nama Kategori'),
+                Textarea::make('description')->label('Deskripsi'),
             ]);
     }
 
