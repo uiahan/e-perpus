@@ -17,10 +17,9 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('author');
-            $table->string('isbn')->unique()->nullable();
+            $table->string('code')->unique()->nullable();
             $table->string('publisher');
             $table->year('year');
-            $table->integer('stock');
             $table->timestamps();
         });
     }

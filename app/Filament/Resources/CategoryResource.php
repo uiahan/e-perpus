@@ -23,6 +23,8 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
+    protected static ?string $navigationLabel = 'Kategori';
+
     public static function getNavigationGroup(): ?String
     {
         return 'Menu Kelola';

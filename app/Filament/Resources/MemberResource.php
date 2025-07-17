@@ -26,6 +26,8 @@ class MemberResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationLabel = 'Member';
+
     public static function getNavigationGroup(): ?String
     {
         return 'Menu Kelola';

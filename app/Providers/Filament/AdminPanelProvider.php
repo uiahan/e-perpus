@@ -18,15 +18,18 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+use Illuminate\Support\Facades\Auth;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->default()
+            ->brandName('E-Perpus')
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Http\Controllers\Auth\FilamentLoginController::class)
             ->authGuard('web')
             ->colors([
                 'primary' => Color::Amber,

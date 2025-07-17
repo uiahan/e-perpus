@@ -27,6 +27,8 @@ class BookResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
+    protected static ?string $navigationLabel = 'Buku';
+
     public static function getNavigationGroup(): ?String
     {
         return 'Menu Kelola';

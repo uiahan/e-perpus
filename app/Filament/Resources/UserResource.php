@@ -24,9 +24,21 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
+    protected static ?string $navigationLabel = 'User';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->role === 'superadmin';
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->role === 'superadmin';
+    }
+
     public static function getNavigationGroup(): ?String
     {
-        return 'Menu Kelola';
+        return 'Akun';
     }
 
     public static function form(Form $form): Form

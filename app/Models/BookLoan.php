@@ -11,11 +11,18 @@ class BookLoan extends Model
 
     protected $guarded = ['id'];
 
-    public function member() {
+    public function member()
+    {
         return $this->belongsTo(Member::class);
     }
 
-    public function book() {
-        return $this->belongsTo(Book::class);
+    public function items()
+    {
+        return $this->hasMany(BookLoanItem::class);
+    }
+
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'book_loan_items')->withTimestamps();
     }
 }
