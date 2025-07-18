@@ -20,6 +20,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+use Filament\Tables\Actions\Action; // Import Action class
+use Illuminate\Support\Facades\Http; // Import Http facade
+use Illuminate\Support\Facades\Log; // Import Log facade
+use Filament\Notifications\Notification; // Import Notification class
 
 class BookLoanResource extends Resource
 {
@@ -144,7 +148,45 @@ class BookLoanResource extends Resource
                         );
                     }),
             ])
+            ->headerActions([ // This is where you add actions above the table
+                Action::make('sendGlobalReminder')
+                    ->label('Kirim Notifikasi Pengingat')
+                    ->icon('heroicon-o-bell')
+                    ->color('info')
+                    ->action(function () {
+                        try {
+                            $username = env('REMINDER_API_USERNAME', 'fauzi');
+                            $password = env('REMINDER_API_PASSWORD', 'Password123!');
+                            $endpoint = env('REMINDER_API_ENDPOINT', 'https://n-fauzi.linkbee.id/webhook/execute-reminder');
 
+                            $response = Http::withBasicAuth($username, $password)
+                                ->post($endpoint);
+
+                            if ($response->successful()) {
+                                Notification::make()
+                                    ->title('Notifikasi Pengingat Terkirim')
+                                    ->body('API pengingat berhasil dipanggil.')
+                                    ->success()
+                                    ->send();
+                                Log::info('Reminder API call successful (global)', ['response' => $response->json()]);
+                            } else {
+                                Notification::make()
+                                    ->title('Gagal Mengirim Notifikasi Pengingat')
+                                    ->body('API pengingat mengembalikan error: ' . $response->status())
+                                    ->danger()
+                                    ->send();
+                                Log::error('Reminder API call failed (global)', ['status' => $response->status(), 'response' => $response->body()]);
+                            }
+                        } catch (\Exception $e) {
+                             Notification::make()
+                                ->title('Error Saat Mengirim Notifikasi')
+                                ->body('Terjadi kesalahan: ' . $e->getMessage())
+                                ->danger()
+                                ->send();
+                            Log::error('Exception during global reminder API call', ['error' => $e->getMessage()]);
+                        }
+                    }),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 DeleteAction::make(),
