@@ -45,7 +45,9 @@
         @if ($books->count() > 0)
             <div id="bookContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
                 @foreach ($books as $item)
-                    @include('components.book-card', ['item' => $item])
+                    <div class="cursor-pointer" onclick="showDetail('{{ $item->id }}')">
+                        @include('components.book-card', ['item' => $item])
+                    </div>
                 @endforeach
             </div>
         @else
@@ -58,12 +60,47 @@
         </div>
     </div>
     @include('components.footer')
+    <!-- Modal Detail Buku -->
+    <div id="bookDetailModal" class="fixed inset-0 bg-black bg-opacity-60 hidden justify-center items-center z-50">
+        <div class="bg-neutral-950 text-white rounded-xl p-6 w-full max-w-3xl relative">
+            <button id="closeModal" class="absolute top-2 right-3 text-white text-2xl">&times;</button>
+            <div class="flex flex-col md:flex-row gap-6">
+                <img id="modalCover" src="" alt="Cover" class="w-full md:w-60 rounded-lg object-cover" />
+                <div>
+                    <h2 id="modalTitle" class="text-2xl font-bold mb-2"></h2>
+                    <p id="modalAuthor" class="mb-1 text-sm text-gray-400"></p>
+                    <p id="modalPublisher" class="mb-1 text-sm text-gray-400"></p>
+                    <p id="modalYear" class="mb-4 text-sm text-gray-400"></p>
+                    <p id="modalDescription" class="text-gray-200"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     @push('js')
         <script>
             const searchInput = document.getElementById('searchInput');
             const categoryFilter = document.getElementById('categoryFilter');
             const bookContainer = document.getElementById('bookContainer');
+
+            const modal = document.getElementById('bookDetailModal');
+            const closeModal = document.getElementById('closeModal');
+
+            function openModal(data) {
+                document.getElementById('modalCover').src = `/storage/${data.cover}`;
+                document.getElementById('modalTitle').textContent = data.title;
+                document.getElementById('modalAuthor').textContent = `Pengarang: ${data.author}`;
+                document.getElementById('modalPublisher').textContent = `Penerbit: ${data.publisher}`;
+                document.getElementById('modalYear').textContent = `Tahun: ${data.year}`;
+                document.getElementById('modalDescription').textContent = data.description || '-';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            closeModal.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
 
             function fetchBooks() {
                 const keyword = searchInput.value;
@@ -90,25 +127,29 @@
                                 `<div class="badge badge-outline badge-warning">${cat.category_name}</div>`
                             ).join('');
 
-                            const card = `
-                <div class="card bg-base-100 w-full shadow-sm">
-                    <figure>
-                        <img src="/storage/${item.cover}" class="h-72 object-cover w-full" alt="${item.title}" />
-                    </figure>
-                    <div class="card-body bg-neutral-950">
-                        <h2 class="card-title text-white">
-                            ${item.title}
-                            <div class="badge badge-secondary">${item.year}</div>
-                        </h2>
-                        <p class="text-gray-200 line-clamp-2">${item.description}</p>
-                        <p class="text-gray-200">Pengarang: ${item.author}</p>
-                        <div class="card-actions justify-end flex-wrap">
-                            ${categories}
+                            const card = document.createElement('div');
+                            card.className = 'card bg-base-100 w-full shadow-sm cursor-pointer';
+                            card.innerHTML = `
+                        <figure>
+                            <img src="/storage/${item.cover}" class="h-72 object-cover w-full" alt="${item.title}" />
+                        </figure>
+                        <div class="card-body bg-neutral-950">
+                            <h2 class="card-title text-white">
+                                ${item.title}
+                                <div class="badge badge-secondary">${item.year}</div>
+                            </h2>
+                            <p class="text-gray-200 line-clamp-2">${item.description}</p>
+                            <p class="text-gray-200">Pengarang: ${item.author}</p>
+                            <div class="card-actions justify-end flex-wrap">${categories}</div>
                         </div>
-                    </div>
-                </div>
-                `;
-                            bookContainer.innerHTML += card;
+                    `;
+                            card.addEventListener('click', () => {
+                                fetch(`/books/${item.id}`)
+                                    .then(res => res.json())
+                                    .then(book => openModal(book));
+                            });
+
+                            bookContainer.appendChild(card);
                         });
                     });
             }
@@ -116,6 +157,14 @@
             searchInput.addEventListener('input', fetchBooks);
             categoryFilter.addEventListener('change', fetchBooks);
         </script>
+        <script>
+            function showDetail(id) {
+                fetch(`/books/${id}`)
+                    .then(res => res.json())
+                    .then(data => openModal(data));
+            }
+        </script>
     @endpush
+
 
 @endsection
