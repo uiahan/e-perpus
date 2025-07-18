@@ -7,12 +7,12 @@
             </path>
         </svg>
         <p>
-            ACME Industries Ltd.
+            E-Perpus.
             <br />
-            Providing reliable tech since 1992
+            Copyright © 2025 by E-Perpus.
         </p>
     </aside>
-    <nav>
+    {{-- <nav>
         <h6 class="footer-title">Services</h6>
         <a class="link link-hover">Branding</a>
         <a class="link link-hover">Design</a>
@@ -31,5 +31,5 @@
         <a class="link link-hover">Terms of use</a>
         <a class="link link-hover">Privacy policy</a>
         <a class="link link-hover">Cookie policy</a>
-    </nav>
+    </nav> --}}
 </footer>
