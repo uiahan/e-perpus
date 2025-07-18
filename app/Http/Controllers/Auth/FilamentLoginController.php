@@ -20,10 +20,10 @@ class FilamentLoginController extends Login
             return null;
         }
 
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
 
         if (! in_array($user->role, ['admin', 'superadmin'])) {
-            Auth::logout();
+            Auth::guard('web')->logout();
             $this->addError('email', 'Akun ini tidak punya akses admin.');
             return null;
         }
