@@ -19,3 +19,9 @@ Route::get('/debug-auth', function () {
         'cookie' => request()->cookie('laravel_session'),
     ];
 });
+Route::get('/force-login', function () {
+    $user = \App\Models\User::first();
+    Auth::login($user);
+    session()->regenerate();
+    return redirect('/debug-auth');
+});
