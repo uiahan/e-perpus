@@ -29,7 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('E-Perpus')
             ->id('admin')
             ->path('admin')
-            ->login(\App\Http\Controllers\Auth\FilamentLoginController::class)
+            ->login()
+            // \App\Http\Controllers\Auth\FilamentLoginController::class
             ->authGuard('web')
             ->colors([
                 'primary' => Color::Amber,
