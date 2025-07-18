@@ -1,0 +1,34 @@
+# Gunakan image PHP-FPM resmi
+FROM php:8.2-fpm
+
+# Install dependencies sistem
+RUN apt-get update && apt-get install -y \
+    git unzip curl libzip-dev libpng-dev libonig-dev libxml2-dev zip \
+    libjpeg-dev libfreetype6-dev libpq-dev libicu-dev \
+    libcurl4-openssl-dev default-mysql-client \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip intl
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy semua file proyek ke dalam container
+COPY . .
+
+# Install dependensi Laravel
+RUN composer install --no-dev --optimize-autoloader
+
+# Build asset frontend pakai Vite
+RUN npm install && npm run build
+
+# Set permission
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
+
+# Gunakan user www-data (non-root)
+USER www-data
+
+# Jalankan php-fpm
+CMD ["php-fpm"]
