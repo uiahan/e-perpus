@@ -1,5 +1,5 @@
 @extends('layouts.main-layout')
-@section('title', 'Beranda')
+@section('title', 'Koleksi Buku')
 @section('content')
     @include('components.navbar')
     <div class="flex justify-between xl:px-60 px-4 min-h-[85vh] items-center">
@@ -37,5 +37,9 @@
                 </div>
             @endforeach
         </div>
+        <div class="mt-4">
+            {{ $books->links() }}
+        </div>
     </div>
+    @include('components.footer')
 @endsection

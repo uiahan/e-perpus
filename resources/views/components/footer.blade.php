@@ -1,4 +1,4 @@
-<footer class="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
+<footer class="footer sm:footer-horizontal text-base-content xl:px-60 px-4 py-40 bg-neutral-950">
     <aside>
         <svg width="50" height="50" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd"
             clip-rule="evenodd" class="fill-current">

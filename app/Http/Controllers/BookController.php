@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class BookController extends Controller
 {
     public function home() {
-        $books = Book::with('categories')->get();
+        $books = Book::with('categories')->paginate(12);
         return view('pages.home', compact('books'));
     }
 }
