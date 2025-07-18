@@ -2,11 +2,14 @@ FROM composer:2.2 AS composer_base
 
 # Gunakan MySQL dan ekstensi lain yang dibutuhkan
 ARG PHP_EXTS="pdo_mysql pcntl gd zip intl exif mysqli"
-ARG PHP_ENABLE_EXTS="exif intl" # Redis dihapus
+ARG PHP_PECL_EXTS="redis"
+ARG PHP_ENABLE_EXTS="exif intl redis"
 
 RUN set -eux; \
     apk add --virtual build-dependencies --no-cache ${PHPIZE_DEPS} openssl ca-certificates libxml2-dev oniguruma-dev \
     && apk add --update --no-cache freetype-dev libjpeg-turbo-dev jpeg-dev libpng-dev libzip-dev icu-dev \
+    && pecl install ${PHP_PECL_EXTS} \
+    && docker-php-ext-enable ${PHP_PECL_EXTS} \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) ${PHP_EXTS} \
     && docker-php-ext-enable ${PHP_ENABLE_EXTS} \
@@ -34,13 +37,15 @@ FROM php:8.3.4-fpm-alpine
 
 USER root
 
-# Tambahkan dependency untuk MySQL, tidak pakai redis/pgsql
+# Tambahkan dependency untuk MySQL dan Redis
 RUN apk add --no-cache \
     msmtp perl wget procps shadow \
     libzip libpng libjpeg-turbo libwebp freetype icu \
     && apk add --no-cache --virtual build-essentials \
     icu-dev icu-libs zlib-dev g++ make automake autoconf libzip-dev \
     libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install \
         gd \
