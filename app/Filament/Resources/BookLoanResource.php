@@ -57,14 +57,29 @@ class BookLoanResource extends Resource
 
     public static function afterCreate($record, array $data): void
     {
+        Log::info('afterCreate start', [
+            'loan_id' => $record->id,
+            'book_ids' => $data['book_ids'] ?? null,
+        ]);
+
         $bookIds = $data['book_ids'] ?? [];
 
         foreach ($bookIds as $bookId) {
-            $record->items()->create([
-                'book_id' => $bookId,
-            ]);
+            try {
+                $record->items()->create([
+                    'book_id' => $bookId,
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Error create item', [
+                    'book_id' => $bookId,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
+
+        Log::info('afterCreate finished', ['loan_id' => $record->id]);
     }
+
 
     public static function getNavigationGroup(): ?String
     {
@@ -178,7 +193,7 @@ class BookLoanResource extends Resource
                                 Log::error('Reminder API call failed (global)', ['status' => $response->status(), 'response' => $response->body()]);
                             }
                         } catch (\Exception $e) {
-                             Notification::make()
+                            Notification::make()
                                 ->title('Error Saat Mengirim Notifikasi')
                                 ->body('Terjadi kesalahan: ' . $e->getMessage())
                                 ->danger()
