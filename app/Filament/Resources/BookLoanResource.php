@@ -96,7 +96,12 @@ class BookLoanResource extends Resource
                     ->dehydrated()
                     ->required()
                     ->label('Nomor Peminjaman'),
+                DatePicker::make('loan_date')
+                    ->default(now())
+                    ->required()
+                    ->label('Tanggal Peminjaman'),
                 DatePicker::make('due_date')->required()->label('Tenggat Waktu'),
+
                 Select::make('status')
                     ->options([
                         'Dalam Masa Pinjaman' => 'Dalam Masa Pinjaman',
