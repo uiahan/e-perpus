@@ -28,6 +28,10 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Member::class);
     }
 
+    public function attendance() {
+        return $this->hasMany(Attendance::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
