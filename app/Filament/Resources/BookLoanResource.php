@@ -176,7 +176,7 @@ class BookLoanResource extends Resource
                         );
                     }),
             ])
-            ->headerActions([ // This is where you add actions above the table
+            ->headerActions([ 
                 Action::make('sendGlobalReminder')
                     ->label('Kirim Notifikasi Pengingat')
                     ->icon('heroicon-o-bell')
