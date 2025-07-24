@@ -28,7 +28,7 @@ class ReportResource extends Resource
                 TextColumn::make('bookLoan.member.name')->label('Nama Member')->searchable(),
                 TextColumn::make('bookLoan.loan_date')->label('Tanggal Pinjam')->date('d M Y'),
                 TextColumn::make('return_date')->label('Tanggal Kembali')->date('d M Y')->placeholder('Belum Kembali'),
-                 TextColumn::make('user.name')
+                 TextColumn::make('bookLoan.user.name')
                     ->label('Disetujui Oleh')
                     ->searchable()
                     ->sortable(),
