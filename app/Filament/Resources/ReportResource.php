@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +29,7 @@ class ReportResource extends Resource
                 TextColumn::make('bookLoan.member.name')->label('Nama Member')->searchable(),
                 TextColumn::make('bookLoan.loan_date')->label('Tanggal Pinjam')->date('d M Y'),
                 TextColumn::make('return_date')->label('Tanggal Kembali')->date('d M Y')->placeholder('Belum Kembali'),
-                 TextColumn::make('bookLoan.user.name')
+                TextColumn::make('bookLoan.user.name')
                     ->label('Disetujui Oleh')
                     ->searchable()
                     ->sortable(),
@@ -63,6 +64,22 @@ class ReportResource extends Resource
 
             ])
             ->defaultSort('id', 'desc')
+            ->headerActions([
+                Action::make('Export Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->label('Export Excel')
+                    ->url(function () {
+                        $from = request()->input('tableFilters.Tanggal%20Pinjam.from');
+                        $to = request()->input('tableFilters.Tanggal%20Pinjam.to');
+
+                        return route('export.excel', [
+                            'from' => $from,
+                            'to' => $to,
+                        ]);
+                    }, shouldOpenInNewTab: true)
+            ])
+
             ->actions([])
             ->bulkActions([]);
     }

@@ -1,10 +1,12 @@
 <?php
 
+use App\Exports\ReportExport;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\HistoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', [BookController::class, 'home'])->name('home');
 Route::get('/books/search', [BookController::class, 'search'])->name('books.search');
@@ -27,3 +29,10 @@ Route::group(['prefix' => 'auth', 'controller' => AuthController::class], functi
 Route::group(['prefix' => 'history', 'controller' => HistoryController::class], function (){
     Route::get('/h', 'history')->name('show.history');
 });
+
+Route::get('/export-laporan', function () {
+    $from = request('from');
+    $to = request('to');
+
+    return Excel::download(new ReportExport($from, $to), 'laporan_peminjaman.xlsx');
+})->name('export.excel');
