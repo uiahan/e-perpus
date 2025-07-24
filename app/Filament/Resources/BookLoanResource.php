@@ -6,6 +6,7 @@ use App\Filament\Resources\BookLoanResource\Pages;
 use App\Filament\Resources\BookLoanResource\RelationManagers;
 use App\Filament\Resources\ItemsRelationManagerResource\RelationManagers\ItemsRelationManager;
 use App\Models\BookLoan;
+use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -120,7 +121,10 @@ class BookLoanResource extends Resource
                     ->relationship('books', 'title')
                     ->searchable()
                     ->preload()
-                    ->required()
+                    ->required(),
+                Hidden::make('user_id')
+                    ->default(auth()->id())
+                    ->dehydrated()
             ]);
     }
 
@@ -154,6 +158,10 @@ class BookLoanResource extends Resource
                     'Sudah Dikembalikan' => 'success',
                     'Melebihi Tenggat Waktu' => 'danger',
                 }),
+                TextColumn::make('user.name')
+                    ->label('Disetujui Oleh')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 Filter::make('loan_num')

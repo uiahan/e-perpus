@@ -5,6 +5,7 @@ namespace App\Filament\Guest\Resources;
 use App\Filament\Guest\Resources\AttendanceResource\Pages;
 use App\Filament\Guest\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -27,35 +28,48 @@ class AttendanceResource extends Resource
     }
 
     public static function form(Form $form): Form
-    {
-        return $form->schema([
-            Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
+{
+    return $form->schema([
+        Forms\Components\Select::make('user_id')
+            ->label('Pilih User')
+            ->relationship('user', 'name')
+            ->searchable()
+            ->reactive()
+            ->afterStateUpdated(function ($state, callable $set) {
+                if ($state) {
+                    $user = User::find($state);
+                    if ($user) {
+                        $set('name', $user->name);
+                        $set('phone', $user->phone ?? '');
+                    }
+                } else {
+                    $set('name', '');
+                    $set('phone', '');
+                }
+            }),
 
-            Forms\Components\TextInput::make('phone')
-                ->tel()
-                ->maxLength(20),
+        Forms\Components\TextInput::make('name')
+            ->required()
+            ->maxLength(255),
 
-            Forms\Components\Select::make('gender')
-                ->options([
-                    'L' => 'Laki-laki',
-                    'P' => 'Perempuan',
-                ])
-                ->nullable(),
+        Forms\Components\TextInput::make('phone')
+            ->tel()
+            ->maxLength(20),
 
-            Forms\Components\TextInput::make('purpose')
-                ->label('Tujuan Kunjungan')
-                ->maxLength(255)
-                ->default('Membaca Buku')
-                ->nullable(),
+        Forms\Components\Select::make('gender')
+            ->options([
+                'L' => 'Laki-laki',
+                'P' => 'Perempuan',
+            ])
+            ->nullable(),
 
-            Forms\Components\Select::make('user_id')
-                ->relationship('user', 'name')
-                ->searchable()
-                ->nullable(),
-        ]);
-    }
+        Forms\Components\TextInput::make('purpose')
+            ->label('Tujuan Kunjungan')
+            ->maxLength(255)
+            ->default('Membaca Buku')
+            ->nullable(),
+    ]);
+}
 
     public static function table(Table $table): Table
     {
