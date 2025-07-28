@@ -28,48 +28,64 @@ class AttendanceResource extends Resource
     }
 
     public static function form(Form $form): Form
-{
-    return $form->schema([
-        Forms\Components\Select::make('user_id')
-            ->label('Pilih User')
-            ->relationship('user', 'name')
-            ->searchable()
-            ->reactive()
-            ->afterStateUpdated(function ($state, callable $set) {
-                if ($state) {
-                    $user = User::find($state);
-                    if ($user) {
-                        $set('name', $user->name);
-                        $set('phone', $user->phone ?? '');
+    {
+        return $form->schema([
+            Forms\Components\Select::make('user_id')
+                ->label('Pilih User')
+                ->relationship('user', 'name')
+                ->searchable()
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $user = \App\Models\User::find($state);
+                        if ($user) {
+                            $set('name', $user->name);
+                            $set('phone', $user->phone ?? '');
+                            $set('gender', $user->gender ?? '');
+                            $set('profession', $user->profession ?? '');
+                            $set('address', $user->address ?? '');
+                        }
+                    } else {
+                        $set('name', '');
+                        $set('phone', '');
+                        $set('gender', '');
+                        $set('profession', '');
+                        $set('address', '');
                     }
-                } else {
-                    $set('name', '');
-                    $set('phone', '');
-                }
-            }),
+                }),
 
-        Forms\Components\TextInput::make('name')
-            ->required()
-            ->maxLength(255),
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255),
 
-        Forms\Components\TextInput::make('phone')
-            ->tel()
-            ->maxLength(20),
+            Forms\Components\TextInput::make('phone')
+                ->tel()
+                ->maxLength(20),
 
-        Forms\Components\Select::make('gender')
-            ->options([
-                'L' => 'Laki-laki',
-                'P' => 'Perempuan',
-            ])
-            ->nullable(),
+            Forms\Components\Select::make('gender')
+                ->options([
+                    'L' => 'Laki-laki',
+                    'P' => 'Perempuan',
+                ])
+                ->nullable(),
 
-        Forms\Components\TextInput::make('purpose')
-            ->label('Tujuan Kunjungan')
-            ->maxLength(255)
-            ->default('Membaca Buku')
-            ->nullable(),
-    ]);
-}
+            Forms\Components\TextInput::make('profession')
+                ->label('Pekerjaan')
+                ->maxLength(100)
+                ->nullable(),
+
+            Forms\Components\Textarea::make('address')
+                ->label('Alamat')
+                ->rows(2)
+                ->nullable(),
+
+            Forms\Components\TextInput::make('purpose')
+                ->label('Tujuan Kunjungan')
+                ->maxLength(255)
+                ->default('Membaca Buku')
+                ->nullable(),
+        ]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -78,11 +94,10 @@ class AttendanceResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('gender')->label('JK'),
+                Tables\Columns\TextColumn::make('profession')->label('Pekerjaan'),
+                Tables\Columns\TextColumn::make('address')->label('Alamat')->limit(30),
                 Tables\Columns\TextColumn::make('purpose')->label('Tujuan'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->label('Waktu Masuk'),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -93,6 +108,7 @@ class AttendanceResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

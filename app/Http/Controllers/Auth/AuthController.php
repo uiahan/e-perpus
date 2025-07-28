@@ -43,7 +43,11 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:250',
             'email' => 'required|email|max:250|unique:users',
-            'password' => 'required|min:8|confirmed'
+            'password' => 'required|confirmed',
+            'phone' => 'nullable|string|max:20',
+            'gender' => 'nullable|in:L,P',
+            'profession' => 'nullable|string|max:100',
+            'address' => 'nullable|string',
         ]);
 
         User::create([
@@ -52,6 +56,10 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'guest',
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+            'profession' => $request->profession,
+            'address' => $request->address,
         ]);
 
         return redirect()->route('show.login')

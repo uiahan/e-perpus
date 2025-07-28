@@ -30,6 +30,30 @@ class AttendanceResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Select::make('user_id')
+                ->label('Pilih User')
+                ->relationship('user', 'name')
+                ->searchable()
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if ($state) {
+                        $user = \App\Models\User::find($state);
+                        if ($user) {
+                            $set('name', $user->name);
+                            $set('phone', $user->phone ?? '');
+                            $set('gender', $user->gender ?? '');
+                            $set('profession', $user->profession ?? '');
+                            $set('address', $user->address ?? '');
+                        }
+                    } else {
+                        $set('name', '');
+                        $set('phone', '');
+                        $set('gender', '');
+                        $set('profession', '');
+                        $set('address', '');
+                    }
+                }),
+
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(255),
@@ -45,15 +69,20 @@ class AttendanceResource extends Resource
                 ])
                 ->nullable(),
 
+            Forms\Components\TextInput::make('profession')
+                ->label('Pekerjaan')
+                ->maxLength(100)
+                ->nullable(),
+
+            Forms\Components\Textarea::make('address')
+                ->label('Alamat')
+                ->rows(2)
+                ->nullable(),
+
             Forms\Components\TextInput::make('purpose')
                 ->label('Tujuan Kunjungan')
                 ->maxLength(255)
                 ->default('Membaca Buku')
-                ->nullable(),
-
-            Forms\Components\Select::make('user_id')
-                ->relationship('user', 'name')
-                ->searchable()
                 ->nullable(),
         ]);
     }
@@ -65,19 +94,10 @@ class AttendanceResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('gender')->label('JK'),
+                Tables\Columns\TextColumn::make('profession')->label('Pekerjaan'),
+                Tables\Columns\TextColumn::make('address')->label('Alamat')->limit(30),
                 Tables\Columns\TextColumn::make('purpose')->label('Tujuan'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->label('Waktu Masuk'),
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Action::make('formKehadiran')
-                    ->label('Form Kehadiran')
-                    ->color('info')
-                    ->icon('heroicon-o-pencil-square')
-                    ->url('/guest/attendances/create') 
-                    ->openUrlInNewTab(true)
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
