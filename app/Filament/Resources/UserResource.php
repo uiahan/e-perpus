@@ -47,6 +47,16 @@ class UserResource extends Resource
             ->schema([
                 TextInput::make('name')->required()->label('Nama'),
                 TextInput::make('email')->email()->required()->unique(ignoreRecord: true)->label('Email'),
+                TextInput::make('phone')->label('Nomor HP')->tel(),
+                Select::make('gender')
+                    ->options([
+                        'L' => 'Laki-laki',
+                        'P' => 'Perempuan',
+                    ])
+                    ->label('Jenis Kelamin'),
+                TextInput::make('profession')->label('Pekerjaan'),
+                TextInput::make('address')->label('Alamat')->columnSpanFull(),
+
                 Select::make('role')
                     ->options([
                         'superadmin' => 'Superadmin',
@@ -55,6 +65,7 @@ class UserResource extends Resource
                     ])
                     ->default('member')
                     ->required(),
+
                 TextInput::make('password')
                     ->password()
                     ->dehydrateStateUsing(function ($state) {
@@ -67,17 +78,19 @@ class UserResource extends Resource
             ]);
     }
 
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('name')->searchable()->label('Nama Lengkap'),
                 TextColumn::make('email')->label('Email'),
+                TextColumn::make('phone')->label('Nomor HP'),
+                TextColumn::make('gender')->label('Gender')->formatStateUsing(fn($state) => $state === 'L' ? 'Laki-laki' : ($state === 'P' ? 'Perempuan' : '-')),
+                TextColumn::make('profession')->label('Pekerjaan'),
+                TextColumn::make('address')->label('Alamat')->limit(30),
                 TextColumn::make('role')->badge()->label('Role'),
                 TextColumn::make('created_at')->dateTime()->label('Bergabung Pada'),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -89,6 +102,7 @@ class UserResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

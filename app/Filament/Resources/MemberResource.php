@@ -42,7 +42,11 @@ class MemberResource extends Resource
                 TextInput::make('email')->required()->email()->unique(User::class, 'email')->label('Email'),
                 DatePicker::make('birth_date')->required()->label('Tanggal Lahir'),
                 TextInput::make('profession')->required()->label('Profesi'),
-                Textarea::make('address')->required()->label('Alamat'),
+                Select::make('gender')->options([
+                    'L' => 'Laki Laki',
+                    'P' => 'Perempuan',
+                ])->required()->label('Jenis Kelamin'),
+                Textarea::make('address')->required()->label('Alamat')
             ]);
     }
 
@@ -52,8 +56,10 @@ class MemberResource extends Resource
             ->columns([
                 TextColumn::make('name')->searchable()->label('Nama Lengkap'),
                 TextColumn::make('phone')->label('Nomor Telepon'),
+                TextColumn::make('user.email')->label('User')->label('Email'),
                 TextColumn::make('profession')->label('Profesi'),
-                TextColumn::make('user.email')->label('User')->label('email'),
+                TextColumn::make('gender')->label('Jenkel'),
+                TextColumn::make('address')->label('Alamat')->limit(30),
             ])
             ->filters([
                 //
