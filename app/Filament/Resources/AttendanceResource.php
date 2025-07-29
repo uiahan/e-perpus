@@ -102,6 +102,14 @@ class AttendanceResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                Action::make('formKehadiran')
+                    ->label('Form Kehadiran')
+                    ->color('info')
+                    ->icon('heroicon-o-pencil-square')
+                    ->url('/guest/attendances/create')
+                    ->openUrlInNewTab(true)
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
