@@ -87,14 +87,28 @@ class UserResource extends Resource
                 TextColumn::make('email')->label('Email'),
                 TextColumn::make('phone')->label('Nomor HP'),
                 TextColumn::make('gender')->label('Gender')->formatStateUsing(fn($state) => $state === 'L' ? 'Laki-laki' : ($state === 'P' ? 'Perempuan' : '-')),
-                TextColumn::make('profession')->label('Pekerjaan'),
-                TextColumn::make('address')->label('Alamat')->limit(30),
+                TextColumn::make('profession')->label('Pekerjaan')->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('address')->label('Alamat')->limit(30)->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('role')->badge()->label('Role'),
-                TextColumn::make('created_at')->dateTime()->label('Bergabung Pada'),
+                TextColumn::make('created_at')->date()->label('Bergabung Pada')->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 DeleteAction::make(),
+                Tables\Actions\Action::make('promote')
+                    ->databaseTransaction()
+                    ->label('Promote')
+                    ->icon('heroicon-o-arrow-up')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->disabled(fn(User $record) => $record->role != 'guest')
+                    ->action(function (User $record, Tables\Actions\Action $action) {
+                        $record->update(['role' => 'member']);
+                        $record->member()->create($record->attributesToArray() + [
+                            'birth_date' => now(),
+                        ]);
+                        return $action->success();
+                    })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

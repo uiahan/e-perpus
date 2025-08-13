@@ -19,6 +19,7 @@ class AttendanceResource extends Resource
     protected static ?string $model = Attendance::class;
 
     protected static ?string $navigationLabel = 'Form Kehadiran';
+    protected static ?string $label = "Form Kehadiran";
 
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
 

@@ -25,6 +25,9 @@
                     </button>
                     <div x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-48 bg-neutral-900 shadow-md z-10">
                         <a href="{{ route('show.history') }}" class="block px-4 py-2 text-gray-200 hover:bg-neutral-800"><i class="fa-regular fa-book"></i> Riwayat</a>
+                        @if (auth()->user()?->role == 'member')
+                        <a href="{{ route('filament.member.resources.book-requests.index') }}" class="block px-4 py-2 text-gray-200 hover:bg-neutral-800"><i class="fa-solid fa-book-medical"></i> Permintaan Buku</a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-neutral-800"><i class="fa-regular fa-arrow-left-from-bracket"></i> Logout</button>

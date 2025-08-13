@@ -28,6 +28,7 @@ class BookResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
     protected static ?string $navigationLabel = 'Buku';
+    protected static ?string $label = "Buku";
 
     public static function getNavigationGroup(): ?String
     {
@@ -60,6 +61,7 @@ class BookResource extends Resource
                 TextInput::make('publisher')->required()->label('Penerbit'),
                 TextInput::make('year')->numeric()->required()->label('Tahun'),
                 TextInput::make('code')->nullable()->unique(ignoreRecord: true)->label('Kode'),
+                TextInput::make('stock')->numeric()->default(0)->required()->label('Stok'),
             ]);
     }
 
@@ -84,6 +86,9 @@ class BookResource extends Resource
                         default => 'gray',
                     }),
                 TextColumn::make('year')->label('Tahun'),
+                TextColumn::make('stock')
+                    ->label('Stok')
+                    ->sortable(),
             ])
             ->filters([
                 //

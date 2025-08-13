@@ -33,6 +33,7 @@ class BookLoanResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-bookmark';
 
     protected static ?string $navigationLabel = 'Peminjaman Buku';
+    protected static ?string $label = "Peminjaman Buku";
 
     public static function generateLoanNumber(): string
     {
@@ -101,10 +102,11 @@ class BookLoanResource extends Resource
                     ->default(now())
                     ->required()
                     ->label('Tanggal Peminjaman'),
-                DatePicker::make('due_date')->required()->label('Tenggat Waktu'),
+                DatePicker::make('due_date')->required()->label('Pengembalian'),
 
                 Select::make('status')
                     ->options([
+                        'Pengajuan' => 'Pengajuan',
                         'Dalam Masa Pinjaman' => 'Dalam Masa Pinjaman',
                         'Sudah Dikembalikan' => 'Sudah Dikembalikan',
                         'Melebihi Tenggat Waktu' => 'Melebihi Tenggat Waktu',
@@ -128,17 +130,13 @@ class BookLoanResource extends Resource
             ]);
     }
 
-    public static function getTableQuery(): Builder
-    {
-        return BookLoan::query()
-            ->select('loan_num', 'member_id', 'due_date')
-            ->groupBy('loan_num', 'member_id', 'due_date');
-    }
-
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->orderBy('created_at', 'desc');
+            })
             ->columns([
                 TextColumn::make('loan_num')->searchable(),
                 TextColumn::make('member.name')->label('Member'),
@@ -151,9 +149,10 @@ class BookLoanResource extends Resource
                         return $books;
                     }),
                 TextColumn::make('due_date')
-                    ->label('Tenggat Waktu')
+                    ->label('Pengembalian')
                     ->date('d M Y'),
                 TextColumn::make('status')->badge()->color(fn($state) => match ($state) {
+                    'Pengajuan' => 'primary',
                     'Dalam Masa Pinjaman' => 'warning',
                     'Sudah Dikembalikan' => 'success',
                     'Melebihi Tenggat Waktu' => 'danger',

@@ -20,6 +20,7 @@ class ReportResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
     protected static ?string $navigationLabel = 'Laporan Peminjaman';
     protected static ?string $navigationGroup = 'Laporan';
+    protected static ?string $label = "Laporan Peminjaman";
 
     public static function table(Tables\Table $table): Tables\Table
     {

@@ -16,4 +16,15 @@ class EditBookLoan extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if ($this->record->status == 'Pengajuan' && $data['status'] == 'Dalam Masa Pinjaman') {
+            $this->record->items()->with('book')->get()->each(function ($item) {
+                $item->book->decrement('stock');
+            });
+        }
+
+        return $data;
+    }
 }

@@ -2,6 +2,15 @@
 @section('title', 'Koleksi Buku')
 @section('content')
     @include('components.navbar')
+    @if (auth()->user()?->role == 'guest')
+    <div class="pt-5">
+        <div class="bg-neutral-950 text-center py-4">
+            <p class="text-lg text-red-500">Anda masuk sebagai <strong>{{ auth()->user()->role }}</strong>. Silakan
+                lapor ke admin untuk daftar menjadi anggota perpustakaan.</p>
+            </p>
+        </div>
+    </div>
+    @endif
     <div class="flex flex-col xl:flex-row xl:justify-between xl:px-60 px-6 min-h-[85vh] items-center justify-center">
         <div>
             <img class="2xl:w-[30rem] md:w-[20rem] w-[15rem]" src="{{ asset('images/book-lover-25.svg') }}" alt="">
@@ -70,6 +79,7 @@
                     <h2 id="modalTitle" class="text-2xl font-bold mb-2"></h2>
                     <p id="modalAuthor" class="mb-1 text-sm text-gray-400"></p>
                     <p id="modalPublisher" class="mb-1 text-sm text-gray-400"></p>
+                    <div id="modalCategories" class="mb-1"></div>
                     <p id="modalYear" class="mb-4 text-sm text-gray-400"></p>
                     <p id="modalDescription" class="text-gray-200"></p>
                 </div>
@@ -92,6 +102,9 @@
                 document.getElementById('modalTitle').textContent = data.title;
                 document.getElementById('modalAuthor').textContent = `Pengarang: ${data.author}`;
                 document.getElementById('modalPublisher').textContent = `Penerbit: ${data.publisher}`;
+                document.getElementById('modalCategories').innerHTML = data.categories.map(cat =>
+                    `<span class="badge badge-outline badge-warning">${cat.category_name}</span>`
+                ).join(' ');
                 document.getElementById('modalYear').textContent = `Tahun: ${data.year}`;
                 document.getElementById('modalDescription').textContent = data.description || '-';
                 modal.classList.remove('hidden');
